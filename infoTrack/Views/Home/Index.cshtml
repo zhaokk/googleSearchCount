@@ -1,0 +1,60 @@
+﻿@section Scripts{
+    <script>
+        $("#SEOlist").submit(function (event) {
+            $(document).ajaxStart(function () {
+                $("#plane").fadeOut("slow", function () {
+                });
+                $("#wait").fadeIn("slow", function () {
+                });
+            });
+            $(document).ajaxComplete(function () {
+                $("#wait").fadeOut("quick", function () {
+                });
+                $("#plane").fadeIn("slow", function () {
+                });
+            });
+            event.preventDefault();
+            $('#SEOlist')[0].checkValidity();
+            var query = $("#exampleInputQuery").val();
+            var url = $("#exampleInputURL").val();
+            var encodedURL = encodeURIComponent(url);
+            var encodedQuery = encodeURIComponent(query);
+            var apiRequest = window.location.origin + "/api/values/?query=" + encodedQuery + "&url=" + encodedURL;
+            $.ajax({
+                url: apiRequest,
+            })
+            .done(function (html) {
+                if (parseInt(html) > 1) {
+                    var output = "while googling keyword '" + query + "' " + html + " items have been found matches this url '" + url + "' ";
+                } else {
+                    var output = "while googling keyword '" + query + "' " + html + " item has been found matches this url '" + url + "' ";
+                }
+                $("#result").text(output)
+                $(".form-wrapper").addClass("send");
+            });
+            console.log(apiRequest);
+        })
+    </script>    
+}
+<div class="row">
+    <form action="/" id="SEOlist">
+        <div class="form-wrapper">
+            <div class="success">
+                <i class="fa fa-check fa-3x"></i>
+                <h1 id="result"></h1>
+            </div>
+            <div class="input-text">
+                <label for="exampleInputQuery">Search Query</label>
+                <input type="text" id="exampleInputQuery" />
+            </div>
+            <div class="input-text">
+                <label for="exampleInputURL">URL to Match</label>
+                <input type="url" id="exampleInputURL" value="https://" />
+            </div>
+            <div id="wait"><img src='~/Content/ripple.svg' width="64" height="64" /></div>
+            <div class="input-button">
+                <button><i id="plane" class="fa fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </form>
+</div>
